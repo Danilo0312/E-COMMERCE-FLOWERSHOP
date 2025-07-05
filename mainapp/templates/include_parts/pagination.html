@@ -1,0 +1,26 @@
+<div class="main__pagination">
+    {% if page_obj.has_previous %}
+    <a
+        class="main__pagination_arrow"
+        href="?page={{ page_obj.previous_page_number }}"
+        ><i class="fas fa-chevron-left"></i
+    ></a>
+    {% if page_obj.number|add:"-1" != 1 %}
+    <a class="main__pagination_start" href="?page=1">1 ... </a>
+    {% endif %} {% endif %} {% if page_obj.has_next %}
+    <span class="main__pagination_current">
+        {{ page_obj.number }} из {% if page_obj.number == page_obj.paginator.num_pages %}
+        <span>{{ page_obj.paginator.num_pages }}</span>
+        {% else %}
+        <a href="?page={{page_obj.paginator.num_pages}}"
+            >{{page_obj.paginator.num_pages}}</a
+        >
+        {% endif %}
+    </span>
+    <a
+        class="main__pagination_arrow"
+        href="?page={{ page_obj.next_page_number }}"
+        ><i class="fas fa-chevron-right"></i
+    ></a>
+    {% endif %}
+</div>

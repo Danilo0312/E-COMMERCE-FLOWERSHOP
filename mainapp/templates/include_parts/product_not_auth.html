@@ -1,0 +1,163 @@
+{% load filter_tags %}
+<article class="main__product">
+	<div class="main__image">
+		<a href="{{product.get_absolute_url}}">
+			<img src="{{product.image.url}}" alt="" />
+		</a>
+		{% if not product.available %}
+		<span class="signature notAvailable">Распродано</span>
+		{% elif product.shipping_price == 0 %}
+		<span class="signature ship">Бесплатная доставка</span>
+		{% else %}
+		<span class="signature ship"
+			>Доставка <span>{{product.shipping_price}} ₽</span></span
+		>
+		{% endif %} {% if product.sale_value > 0 %}
+		<span class="signature sale"
+			>Скидка <span>{{product.sale_value|floatformat}} %</span></span
+		>
+		{% endif %}
+	</div>
+	<div class="main__product_content">
+		<div class="main__block_first">
+			<div class="main__rating margin">
+				<form action="{% url 'like' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-up"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_likes}}</span>
+				<form action="{% url 'dislike' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-down"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_dislikes}}</span>
+			</div>
+			<div class="main__price margin">
+				{% if product.sale_value > 0 %}
+				<span class="main__sale"
+					>{{product.get_total_sale|floatformat:1}} ₽</span
+				>
+				{% else %}
+				<span>{{product.price|floatformat}} ₽</span>
+				{% endif %}
+			</div>
+		</div>
+		<div class="main__block_second">
+			<div class="main__product_title margin">
+				<a
+					href="{{ product.get_absolute_url }}"
+					class="borderLeftRight magnifyText"
+					>{{product.title}}</a
+				>
+				{% if product.sale_value > 0 %}
+				<span class="main__del_price"
+					><del>{{product.price|floatformat:2}} ₽</del></span
+				>
+				{% endif %}
+			</div>
+
+			<div class="main__product_description">
+				{{product.description|truncatewords:10}}
+			</div>
+		</div>
+		<div class="main__block_third">
+			<form
+				action="{% url 'wishlist:wishlist-add-not-authenticated' id=product.id %}"
+				method="POST"
+                id="wishlistAdd"
+			>
+				{% csrf_token %}
+				<input type="hidden" name="url_from" value="{{request.path}}" />
+				<input type="hidden" id="id" name="id" value="{{ product.id }}" />
+				{% if product.sale_value > 0 %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.get_total_sale|floatformat:1}}"
+                        />
+                    {% else %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.price}}"
+                        />
+                {% endif %}
+				<input
+					type="hidden"
+					id="title"
+					name="title"
+					value="{{ product.title }}"
+				/>
+				<button type="submit" class="main__third_heart_button wish_added">
+					<i class="fas fa-heart"></i>
+				</button>
+			</form>
+			<div class="main__product_button margin">
+				{% if product.available %}
+                
+				<form
+					method="POST"
+					action="{% url 'cart:cart-add-not-authenticated' id=product.id %}"
+                    id="cartAdd"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					<input
+						type="hidden"
+						id="id"
+						name="id"
+						value="{{ product.id }}"
+					/>
+                    {% if product.sale_value > 0 %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.get_total_sale|floatformat:1}}"
+                        />
+                    {% else %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.price}}"
+                        />
+                    {% endif %}
+					<input
+						type="hidden"
+						id="title"
+						name="title"
+						value="{{ product.title }}"
+					/>
+					<button class="overlayLeftBtn" id="overlayLeftBtn">
+						<span>
+							Заказать
+							<i class="fas fa-shopping-cart"></i>
+						</span>
+					</button>
+				</form>
+				{% else %}
+				<a href="{{product.get_absolute_url}}">
+					<button
+						class="main__product_button button not__available_btn pointer"
+					>
+						<span>
+							Просмотр
+							<i class="far fa-eye"></i>
+						</span>
+					</button>
+				</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</article>
+

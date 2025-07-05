@@ -1,0 +1,83 @@
+<article class="cart-wishlist__product">
+	<div class="main__image">
+		<a href="{{order_item_cart.product.get_absolute_url}}">
+			<img src="{{order_item_cart.product.image.url}}" alt="" />
+		</a>
+		{% if order_item_cart.product.shipping_price == 0 %}
+		<span class="signature ship">Бесплатная доставка</span>
+		{% else %}
+		<span class="signature ship"
+			>Доставка
+			<span>{{order_item_cart.product.shipping_price}} ₽</span></span
+		>
+		{% endif %} {% if order_item_cart.product.sale_value > 0 %}
+		<span class="signature sale"
+			>Скидка
+			<span>{{order_item_cart.product.sale_value|floatformat}} %</span></span
+		>
+		{% endif %}
+	</div>
+	<div class="cart-wishlist__content">
+		<div class="cart-wishlist__product-first">
+			<div class="main__product_title margin">
+				<a
+					href="{{ order_item_cart.product.get_absolute_url }}"
+					class="borderLeftRight magnifyText"
+					>{{order_item_cart.product.title}}</a
+				>
+			</div>
+
+			<div class="main__product_description">
+				{{order_item_cart.product.description}}
+			</div>
+		</div>
+
+		<div class="cart-wishlist__product-second">
+			<div class="main__rating margin">
+				<i class="far fa-thumbs-up"></i>
+				<span>0</span>
+				<i class="far fa-thumbs-down"></i>
+				<span>0</span>
+			</div>
+			<div class="cart__product-qty">
+				<form
+					method="POST"
+					action="{% url 'cart:cart-remove-authenticated' id=order_item_cart.product.id %}"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					<button class="overlayLeftBtn delete-qty qty-properties-btns">
+						<span>-</span>
+					</button>
+				</form>
+				<span name="product_qty">{{order_item_cart.quantity}}</span>
+				<form
+					method="POST"
+					action="{% url 'cart:cart-add-authenticated' id=order_item_cart.product.id %}"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					<button class="overlayLeftBtn add-qty qty-properties-btns">
+						<span>+</span>
+					</button>
+				</form>
+			</div>
+			<div class="main__price margin">
+				{% if order_item_cart.product.sale_value > 0 %}
+				<span class="main__del_price"
+					><del
+						>{{order_item_cart.product.price|floatformat:2}} ₽</del
+					></span
+				>
+				<span class="main__sale background"
+					>{{order_item_cart.product.get_total_sale|floatformat:1}} ₽</span
+				>
+				{% else %}
+				<span class="background"
+					>{{order_item_cart.product.price|floatformat}} ₽</span
+				>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</article>

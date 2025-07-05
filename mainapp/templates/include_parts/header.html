@@ -1,0 +1,134 @@
+<header class="header">
+	<div class="burger">
+		<span></span>
+	</div>
+	<nav class="header__nav">
+		<ul class="nav__list">
+			<li class="nav__item">
+				<a class="nav__link home" href="{% url 'base' %}"
+					>Venesia | Flower Shop</a
+				>
+			</li>
+		</ul>
+		<ul class="nav__list">
+			<li class="nav__item">
+				<a
+					href="{% url 'categories' %}"
+					class="nav__link borderLeftRight magnifyText"
+					>Каталог</a
+				>
+			</li>
+			<li class="nav__item">
+				<div class="nav__dropdown_container">
+					<a href="#team" class="nav__link borderLeftRight magnifyText"
+						>Магазин <i class="fas fa-chevron-down arrow-down"></i
+					></a>
+					<div class="nav__dropdown_content">
+						<a href="{% url 'about' %}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>О нас</span
+							></a
+						>
+						<a href="{% url 'reviews' %}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Отзывы</span
+							></a
+						>
+						<a href="#"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Оплата</span
+							></a
+						>
+					</div>
+				</div>
+			</li>
+			<li class="nav__item">
+				<div class="nav__dropdown_container">
+					<a href="#about_us" class="nav__link borderLeftRight magnifyText"
+						>Связаться с нами
+						<i class="fas fa-chevron-down arrow-down"></i
+					></a>
+					<div class="nav__dropdown_content">
+						<a
+							href="https://instagram.com/venesia_maykop?igshid=16j6e7kvh9l7q"
+							><i class="fab fa-instagram"></i>
+							<span class="nav__link borderLeftRight magnifyText">
+								Instagram</span
+							></a
+						>
+						<a href="https://api.whatsapp.com/send?phone=79286697195"
+							><i class="fab fa-whatsapp"></i
+							><span class="nav__link borderLeftRight magnifyText">
+								WhatsApp</span
+							></a
+						>
+						<a href=""
+							><i class="far fa-envelope"></i
+							><span class="nav__link borderLeftRight magnifyText"
+								>yandex.ru@yandex.ru</span
+							></a
+						>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<ul class="nav__list">
+			<li class="nav__item">
+				<a class="nav__link purple-color" href="{% url 'cart:cart' %}">
+                {% if not user.is_authenticated %}
+					<span class="badge" id="badge">{{total_qty_cart}}</span>
+                {% else %}
+                    <span class="badge" id="badge">{{get_cart_qty}}</span>
+                {% endif %}
+					<i class="fas fa-shopping-cart"></i>
+				</a>
+			</li>
+			<li class="nav__item">
+				<a
+					class="nav__link purple-color"
+					href="{% url 'wishlist:wishlist' %}"
+				>
+					{% if not user.is_authenticated %}
+					<span class="badge" id="badge">{{total_qty_wishlist}}</span>
+                    {% else %}
+                        <span class="badge" id="badge">{{get_wishlist_qty}}</span>
+                    {% endif %}
+					<i class="fas fa-heart"></i>
+				</a>
+			</li>
+			<li class="nav__item">
+				<div class="nav__dropdown_container">
+					<a class="nav__link" href="">
+						<i class="fas fa-user"></i>
+						<i class="fas fa-chevron-down arrow-down"></i>
+					</a>
+					<div class="nav__dropdown_content">
+						{% if not user.is_authenticated %}
+						<a href="{% url 'login' %}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Авторизироваться</span
+							></a
+						>
+						<a href="{% url 'registration' %}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Регистрация</span
+							></a
+						>
+						{% else %}
+						<a href="{{customer.get_absolute_url}}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Профиль</span
+							></a
+						>
+						<a href="{% url 'logout' %}"
+							><span class="nav__link borderLeftRight magnifyText"
+								>Выйти</span
+							></a
+						>
+						{% endif %}
+					</div>
+				</div>
+			</li>
+		</ul>
+	</nav>
+</header>
