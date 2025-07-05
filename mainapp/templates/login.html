@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block content %}
+<section class="fields">
+	<h1 class="main__title">Авторизация</h1>
+	<div class="field__container">
+		<form action="{% url 'login' %}" method="POST">
+			{% csrf_token %}
+			{{form.as_p}}
+			<div class="field__button">
+				<input
+					type="submit"
+					class="main__product_button margin button"
+					value="Войти"
+				/>
+				<span
+					>Еще нет аккаунта?
+					<a
+						class="magnifyText borderLeftRight"
+						href="{% url 'registration' %}"
+					>
+						Зарегистрироваться</a
+					></span
+				>
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock %}

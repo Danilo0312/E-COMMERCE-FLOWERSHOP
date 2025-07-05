@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Желания{% endblock title %} {% block content %}
+<h3 class="main__title">Избранные товары</h3>
+<div class="cart-wishlist__container">
+    {% if not user.is_authenticated %}
+        {% for i in wishes_session %} {% for product in products %} {% if i.id == product.id|stringformat:"i" %}
+            {% include "include_parts/wishlist_not_auth.html" %}
+        {% endif %} {% endfor %} {% endfor %}
+        <div class="cart-wishlist__order">
+            <form action="{% url 'wishlist:wishlist-delete-all-not-authenticated'%}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url_from" value="{{request.path}}" />
+                <button class="overlayLeftBtn delete wishlist-del">
+                    <span>
+                        Удалить все
+                        <i class="fas fa-trash-alt"></i>
+                    </span>
+                </button>
+            </form>
+        </div>
+    {% else %}
+        {% for wishlist_item in wishlist_items %}
+            {% include "include_parts/wishlist_auth.html" %}
+        {% endfor %}
+        <div class="cart-wishlist__order">
+            <form action="{% url 'wishlist:wishlist-delete-all-authenticated'%}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url_from" value="{{request.path}}" />
+                <button class="overlayLeftBtn delete wishlist-del">
+                    <span>
+                        Удалить все
+                        <i class="fas fa-trash-alt"></i>
+                    </span>
+                </button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+
+
+{% endblock content %}
+

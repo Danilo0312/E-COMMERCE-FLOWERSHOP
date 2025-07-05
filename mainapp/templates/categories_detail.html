@@ -1,0 +1,38 @@
+{% extends 'base.html' %} 
+{% block title %}Каталог{% endblock title %}
+{% block content %}
+
+<nav class="breadcrumb">
+	<ol class="breadcrumb__ol">
+		<li class="breadcrumb__li">
+			<a href="{% url 'base' %}">Главная </a>
+		</li>
+		<li class="breadcrumb__li">Каталог</li>
+	</ol>
+</nav>
+
+<section class="main">
+	<h1 class="main__title">Каталог</h1>
+	<div class="main__container">
+		{% for category in categories %}
+		<div class="category">
+			<div class="main__image">
+				<a href="{{category.get_absolute_url}}">
+					<img src="{{category.image.url}}" alt="" />
+				</a>
+			</div>
+			<div class="main__product_content">
+				<div class="main__product_title margin">
+					<a
+						href="{{ category.get_absolute_url }}"
+						class="borderLeftRight magnifyText"
+						>{{category.name}}</a
+					>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock content %}

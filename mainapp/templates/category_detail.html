@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Каталог | {{category.name}} {% endblock title %}
+{% block content %}
+
+<nav class="breadcrumb">
+	<ol class="breadcrumb__ol">
+		<li class="breadcrumb__li">
+			<a href="{% url 'base' %}">Главная </a>
+		</li>
+		<li class="breadcrumb__li">
+			<a href="{% url 'categories' %}">Каталог</a>
+		</li>
+		<li class="breadcrumb__li">{{category.name}}</li>
+	</ol>
+</nav>
+
+<section class="category">
+	<h1 class="main__title">Каталог | {{category.name}}</h1>
+	<div class="sidesearch">
+		<aside class="sidesearch__container">
+			<form class="fields" method="GET">
+                <input type="search" name="q" id="">
+				<button class="snapLeftBtn search-btn" type="submit">
+					<span> <i class="fas fa-search"></i></span>
+				</button>
+			</form>
+
+			<form method="GET" class="fields">
+				{% for product in products_of_category %}
+				<label class="checkbox margin path">
+					<input
+						type="checkbox"
+						class="checkbox"
+						name="q"
+						value="{{product.title}}"
+					/>
+					{{product.title}}
+					<svg viewBox="0 0 21 21">
+						<path
+							d="M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186"
+						></path>
+					</svg>
+				</label>
+				{% endfor %} 
+				<div class="sidesearch__buttons">
+					<button class="overlayLeftBtn" type="submit">
+						<span>Поиск</span>
+					</button>
+
+					<button class="overlayLeftBtn" type="submit">
+						<span>Сбросить</span>
+					</button>
+				</div>
+			</form>
+		</aside>
+	</div>
+
+	<div class="category__detail_container">
+        {% if products_search %}
+                {% for product in products_search %}
+                    {% if user.is_authenticated %}
+                        {% include "include_parts/product_auth.html" %}
+                    {% else %}
+                        {% include "include_parts/product_not_auth.html" %}
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+	</div>
+{% comment %} <script src="{% static 'js/category_detail.js' %}"></script> {% endcomment %}
+
+</section>
+{% endblock content %} 
+

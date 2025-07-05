@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+
+		<title>{% block title %}Venesia{% endblock title %}</title>
+		<link
+			rel="shortcut icon"
+			href="{% static 'ico/favicon.ico' %}"
+			type="image/x-icon"
+		/>
+		<link href="{% static 'css/style.css' %}" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+		/>
+	</head>
+	<body>
+		{% include "include_parts/header.html" %}
+		<main class="wrapper">
+			<section class="intro"></section>
+			<section class="main">
+				{% block content %} {% include "include_parts/message.html" %}
+				<h1 class="main__title">
+					Наша витрина
+				</h1>
+				<div class="main__container">
+					{% for product in products %} 
+                        {% if user.is_authenticated %}
+                            {% include "include_parts/product_auth.html" %}  
+                        {% else %}            
+                            {% include "include_parts/product_not_auth.html" %}    
+                        {% endif %}          
+                    {% endfor %}
+                    {% include "include_parts/pagination.html" %}
+				</div>
+				{% endblock content %}
+			</section>
+			{% include "include_parts/footer.html" %}
+		</main>
+		{% block js %}
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			crossorigin="anonymous"
+		></script>
+		{% endblock js %}
+	</body>
+</html>

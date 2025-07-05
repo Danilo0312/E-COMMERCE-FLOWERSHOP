@@ -1,0 +1,243 @@
+{% extends 'base.html' %} {% load static %} {% load filter_tags %} {% block title %} {{product.title}}
+{% endblock title %} {% block content %}
+
+<nav class="breadcrumb">
+	<ol class="breadcrumb__ol">
+		<li class="breadcrumb__li">
+			<a class="borderLeftRight magnifyText" href="{% url 'base' %}"
+				>Главная
+			</a>
+		</li>
+		<li class="breadcrumb__li">
+			<a
+				class="borderLeftRight magnifyText"
+				href="{{ product.category.get_absolute_url }}"
+				>{{ product.category.name }}</a
+			>
+		</li>
+		<li class="breadcrumb__li">{{ product.title }}</li>
+	</ol>
+</nav>
+
+<section class="product">
+	<div class="product__container">
+		<div class="product__first_block">
+			<img alt="{{ product.title   }}" src="{{ product.image.url }}" />
+			<div class="main__block_third">
+				<div class="main__product_button margin">
+					{% if product.available %}
+					<form
+						action="{% url 'cart:cart-add-authenticated' id=product.id %}"
+						method="POST"
+						class="product__detail"
+					>
+						{% csrf_token %}
+						<input
+							type="hidden"
+							name="url_from"
+							value="{{request.path}}"
+						/>
+						{% if not product.sale %}
+						<input type="hidden" name="price" value="{{product.price}}" />
+						{% else %}
+						<input
+							type="hidden"
+							name="price"
+							value="{{product.get_total_sale}}"
+						/>
+						{% endif %}
+						<button class="overlayLeftBtn">
+							<span>
+								Заказать <i class="fas fa-shopping-cart"></i>
+							</span>
+						</button>
+					</form>
+					{% else %}
+					<button
+						class="main__product_button margin button not__available_btn"
+					>
+						<span> Распродано <i class="fas fa-shopping-cart"></i> </span>
+					</button>
+					{% endif %}
+				</div>
+
+				<form
+					action="{% url 'wishlist:wishlist-add-authenticated' id=product.id %}"
+					method="POST"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					{% if not product.sale %}
+					<input type="hidden" name="price" value="{{product.price}}" />
+					{% else %}
+					<input
+						type="hidden"
+						name="price"
+						value="{{product.get_total_sale}}"
+					/>
+					{% endif %}
+					<button type="submit" class="main__third_heart_button">
+						<i class="fas fa-heart"></i>
+					</button>
+				</form>
+			</div>
+		</div>
+		<div class="product__second_block">
+			<h1 class="padding">{{ product.title }}</h1>
+			<div class="product__price">
+				{% if product.sale %}
+				<p class="padding background">
+					{{product.get_total_sale|floatformat:2}} ₽
+				</p>
+				<span class="main__del_price prod_detail_price"
+					><del>{{product.price|floatformat:2}} ₽</del></span
+				>
+				{% else %}
+				<p class="padding background">{{product.price|floatformat:2}} ₽</p>
+				{% endif %}
+			</div>
+			{% if product.available and product.freeship %}
+			<p class="padding">
+				<i class="fas fa-shipping-fast"></i> Доставка бесплатная
+			</p>
+			{% endif %} {% for f_name, f_value in product.get_features.items %}
+			<p class="padding">Ед. измерения: {{f_value}}</p>
+			{% endfor %}
+			<p class="padding">
+				<strong>Описание: </strong>
+				<br />
+				<br />
+				<span class="main__product_description"
+					>{{ product.description }}</span
+				>
+			</p>
+			<p class="main__rating padding">
+				<form action="{% url 'like' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-up"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_likes}}</span>
+				<form action="{% url 'dislike' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-down"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_dislikes}}</span>
+			</p>
+		</div>
+	</div>
+</section>
+<section class="comment">
+	<div class="comment__block">
+		<div class="comment__block_header">
+			<h1 class="padding">
+				Отзывы <span>({{product.reviews_set.count}})</span>
+			</h1>
+		</div>
+		<div class="field__container">
+			<form
+				action="{% url 'add_review' product.slug %}"
+				method="post"
+				id="formReview"
+			>
+				{% csrf_token %}
+				<div class="comment__user">
+					<label for="commentName">Ваше имя *</label>
+                    {% if request.user.is_authenticated %}
+					<input
+						type="text"
+						name="name"
+						class="comment__name"
+						required=""
+						id="commentName"
+                        value="{{request.user.f_name}}"
+					/>
+                    {% else %}
+                    <input
+						type="text"
+						name="name"
+						class="comment__name"
+						required=""
+						id="commentName"
+                        value="Гость"
+					/>
+                    {% endif %}
+					<input type="hidden" name="parent" id="contactparent" value="" />
+					<label for="contactcomment"> Ваш комментарий * </label>
+					<textarea
+						name="comment"
+						cols="40"
+						rows="10"
+						id="contactcomment"
+						class="comment__text"
+						required
+					></textarea>
+				</div>
+				<div class="field__button">
+					<input
+						type="submit"
+						class="main__product_button margin button"
+						value="Отправить"
+					/>
+				</div>
+			</form>
+		</div>
+		{% for review in product.get_review %}
+		<div class="comment__user">
+			<div class="comment__head">
+				<div class="comment__image image">
+					<img src="" alt="user" />
+				</div>
+				<h3>{{ review.name }}</h3>
+				<h1 class="comment__h1">{{review.time}}</h1>
+			</div>
+			<div class="comment__content">
+				<p>{{ review.comment }}</p>
+				<div class="comment__elements">
+					<a
+						href="#formReview"
+						class="borderLeftRight magnifyText"
+						onclick="addReview('{{review.name}}', '{{review.id}}')"
+						>Ответить</a
+					>
+				</div>
+				{% for rew in review.reviews_set.all %}
+				<div class="comment__user reply">
+					<div class="comment__head">
+						<div class="comment__image image">
+							<img src="" alt="user" />
+						</div>
+						<h3>{{ rew.name }}</h3>
+						<h1 class="comment__h1">{{ rew.time }}</h1>
+					</div>
+					<div class="comment__content">
+						<p>{{ rew.comment }}</p>
+						<div class="comment__elements">
+							<a
+								href="#formReview"
+								class="borderLeftRight magnifyText"
+								onclick="addReview('{{review.name}}', '{{review.id}}')"
+								>Ответить</a
+							>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+<script src="{% static 'js/product_detail.js' %}"></script>
+<script>
+	function addReview(name, id) {
+		document.getElementById("contactparent").value = id;
+		document.getElementById("contactcomment").innerText = `${name}, `;
+	}
+</script>
+{% endblock content %}

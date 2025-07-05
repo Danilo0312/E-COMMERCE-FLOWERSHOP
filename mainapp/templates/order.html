@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {% load static %} {% load filter_tags %} {% load filter_tags %}{% block title %} Оформление заказа {% endblock title %} {% block content %}
+<h3 class="main__title">Оформление заказа</h3>
+<section class="checkout">
+    <div class="cart-wishlist__container">
+    {% if not user.is_authenticated %}
+        {% for i in cart_session %} 
+            {% for product in products %} 
+                {% if i.id == product.id %}
+                    {% if cart_session != None %}
+                        {% include "include_parts/order_not_auth.html" %}
+                    {% else %}
+                        <h3 class="main__title">Тут пусто. <a href="{% url 'base' %}">За покупками</a></h3>
+                    {% endif %} {% endif %} {% endfor %} {% endfor %}
+        <div class="cart-wishlist__product_block-total">
+            <div class="cart-wishlist__product-total">
+                Итого: <span class="cart-wishlist__product_block-total-price">{{ total_price|floatformat:2 }} ₽</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{total_qty_cart}}</span>
+            </div>
+            <div class="cart-wishlist__form">
+			<form action="{% url 'cart:cart-delete-all-not-authenticated'%}" method="POST">
+				{% csrf_token %}
+				<input type="hidden" name="url_from" value="{{request.path}}" />
+				<button class="overlayLeftBtn delete wishlist-del">
+					<span>
+						Удалить все
+						<i class="fas fa-trash-alt"></i>
+					</span>
+				</button>
+			</form>
+		</div>
+    {% else %}
+        {% for order_item_cart in order_items_cart %}
+            {% include "include_parts/order_auth.html" %}
+        {% endfor %}
+        <div class="cart-wishlist__product_block-total">
+            <div class="cart-wishlist__product-total">
+                Итого: <span class="cart-wishlist__product_block-total-price">{{get_cart_total}}</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{get_cart_qty}}</span>
+            </div>
+        <div class="cart-wishlist__form">
+		</div>
+    {% endif %}
+    </div>
+</section>
+
+<section class="fields">
+	<h3 class="main__title">Форма заказа</h3>
+	<div class="field__container">
+    <form action="{% url "make_order" %}" method="POST">
+			{% csrf_token %}
+            <p><label for="id_f_name">Имя:</label> <input type="text" name="f_name" maxlength="255" required="" id="id_f_name" value="{{request.user.f_name}}"></p>
+            <p><label for="id_l_name">Фамилия:</label> <input type="text" name="l_name" maxlength="255" required="" id="id_l_name" value="{{request.user.l_name}}"></p>
+            <p><label for="id_email">Email:</label> <input type="email" name="email" required="" id="id_email" value="{{request.user.email}}"></p>
+            <p><label for="id_phone_number">Телефон:</label> <input type="text" name="phone_number" required="" id="id_phone_number" value="{{request.user.phone_number}}"></p>
+            <p><label for="id_address">Адрес:</label> <input type="text" name="address" maxlength="255" required="" id="id_address" value="{{request.user.address}}"></p>
+            <p><label for="id_buying_type">Тип покупки:</label> <select name="buying_type" id="id_buying_type">
+            <option value="self">Самовывоз</option>
+
+            <option value="delivery">Доставка</option>
+
+            </select></p>
+            <p><label for="id_comment">Комментарий к заказу:</label> <input type="text" name="comment" maxlength="5000" required="" id="id_comment"> <span class="helptext">Кол-во символов до 5000</span></p>
+                    
+                <input
+					type="hidden"
+					name="product"
+					maxlength="1024"
+                    value="{% for i in cart_session %} {% for product in products %} {% if i.id == product.id|stringformat:"i" %}{{product.title}} * {{i.qty}} - {{product.get_total_sale}}₽  {% endif %} {% endfor %} {% endfor %}"
+					id="id_product"
+				/>
+               
+			<div class="field__button">
+				<input
+					type="submit"
+					class="main__product_button margin button"
+					value="Оформить заказ"
+				/>
+			</div> 
+		</form>
+	</div>
+</section>
+{% endblock content %}

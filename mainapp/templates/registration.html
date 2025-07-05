@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block content %}
+<section class="fields">
+	<h1 class="main__title">Регистрация нового пользователя</h1>
+	<div class="field__container">
+		<form action="{% url 'registration' %}" method="POST">
+			{% csrf_token %} {{ form.as_p }}
+			<div class="field__button">
+				<input
+					type="submit"
+					class="main__product_button margin button"
+					value="Зарегистрироваться"
+				/>
+				<span
+					>Уже есть аккаунт?
+					<a class="magnifyText borderLeftRight" href="{% url 'login' %}">
+						Войти</a
+					></span
+				>
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock %}

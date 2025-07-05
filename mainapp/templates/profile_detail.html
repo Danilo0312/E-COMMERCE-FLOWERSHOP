@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% load static %} 
+{% block title %}Профиль | {{customer.user}}{% endblock title %} {% block content %}
+<section class="profile">
+	<div class="profile__container">
+		<div class="profile__first_block">
+			<div class="profile__image image">
+				<img src="{{customer.image.url}}" alt="User" />
+				<h1 class="profile__name">{{customer.user}}</h1>
+			</div>
+			<div class="profile__links">
+				<span
+					><a class="borderLeftRight magnifyText" href="{% url 'base' %}"
+						>Главная</a
+					></span
+				>
+				<span
+					><a class="borderLeftRight magnifyText" href="{% url 'cart:cart' %}"
+						>Корзина</a
+					></span
+				>
+				<span
+					><a
+						class="borderLeftRight magnifyText"
+						href="{% url 'categories' %}"
+						>Каталог</a
+					></span
+				>
+				<span
+					><a
+						class="borderLeftRight magnifyText"
+						href="{% url 'categories' %}"
+						>Поменять пароль</a
+					></span
+				>
+				<span
+					><a class="borderLeftRight magnifyText" href="{% url 'logout' %}"
+						>Выйти из аккаунта</a
+					></span
+				>
+			</div>
+		</div>
+		<div class="profile__second_block">
+			<div class="profile__email">
+				Ф.И: {{ customer.user.last_name}} {{customer.user.first_name}}
+			</div>
+			<div class="profile__email">Телефон: {{ customer.phone}}</div>
+			<div class="profile__email">Почта: {{customer.email}}</div>
+			<div class="profile__address">Адрес: {{customer.address}}</div>
+		</div>
+	</div>
+</section>
+
+{% endblock content %}
